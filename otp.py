@@ -18,14 +18,19 @@ def init_folder():
         mkdir(ABSOLUTE_FOLDER_PATH)
 
 
-def get_password():
+def get_password(double_check=False):
     password = getenv("OTP_PASSWORD")
     if not password:
-        password = getpass("Insert the password: ")
-        password_confirm = getpass("Confirm the password: ")
-        if password != password_confirm:
-            print("Passwords do not match")
-            return get_password()
+        if double_check:
+            while True:
+                password = getpass("Insert the password: ")
+                password_confirm = getpass("Confirm the password: ")
+                if password != password_confirm:
+                    print("Passwords do not match, please try again")
+                else:
+                    break
+        else:
+            password = getpass("Insert the password: ")
     return password
 
 
@@ -46,7 +51,7 @@ def decrypt_string(string, password):
 
 
 def save_new_otp(service_name, otp_digit=6, otp_period=30):
-    password = get_password()
+    password = get_password(double_check=True)
 
     otp_secret = input("OTP secret: ")
 
