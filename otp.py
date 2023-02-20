@@ -8,6 +8,7 @@ import json
 import argparse
 from getpass import getpass
 
+
 FOLDER_NAME = "OTP_DATA"
 EXECUTABLE_DIR = Path(__file__).parent.absolute()
 ABSOLUTE_FOLDER_PATH = path.join(EXECUTABLE_DIR, FOLDER_NAME)
