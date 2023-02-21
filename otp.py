@@ -10,7 +10,7 @@ import argparse
 from getpass import getpass
 from datetime import datetime
 
-SERVICE_ID = "OTPGEN"
+SERVICE_ID = "PLACEHOLDER_SERVICE_ID"
 FOLDER_NAME = "OTP_DATA"
 EXECUTABLE_DIR = Path(__file__).parent.absolute()
 ABSOLUTE_FOLDER_PATH = path.join(EXECUTABLE_DIR, FOLDER_NAME)
@@ -23,6 +23,27 @@ def set_pyinstaller_path():
         executable_path = sys.executable
         EXECUTABLE_DIR = path.dirname(executable_path)
         ABSOLUTE_FOLDER_PATH = path.join(EXECUTABLE_DIR, FOLDER_NAME)
+
+
+def check_service_id():
+    if not getattr(sys, 'frozen', False):
+        if SERVICE_ID == "PLACEHOLDER_SERVICE_ID":
+            randomize_service_id()
+
+
+def randomize_service_id():
+    import random
+    import string
+    service_id = ''.join(random.choice(
+        string.ascii_letters + string.digits) for _ in range(16))
+    with open(__file__, "r") as f:
+        lines = f.readlines()
+    with open(__file__, "w") as f:
+        for line in lines:
+            if line.startswith("SERVICE_ID"):
+                f.write(f"SERVICE_ID = \"{service_id}\"\n")
+            else:
+                f.write(line)
 
 
 def init_folder():
@@ -249,6 +270,7 @@ def main():
     args = parser.parse_args()
 
     set_pyinstaller_path()
+    check_service_id()
     init_folder()
 
     if args.add:
