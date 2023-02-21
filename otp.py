@@ -101,7 +101,9 @@ def delete_otp(service_name):
         print(f"{service_name} does not exist")
         exit(1)
 
-    remove(path.join(ABSOLUTE_FOLDER_PATH, service_name + ".json"))
+    choice = input(f"Are you sure you want to delete {service_name}? [y/N] ")
+    if choice.lower() != "y":
+        remove(path.join(ABSOLUTE_FOLDER_PATH, service_name + ".json"))
     print(f"Item {service_name} deleted successfully")
 
 
