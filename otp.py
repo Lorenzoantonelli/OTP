@@ -102,9 +102,9 @@ def delete_otp(service_name):
         exit(1)
 
     choice = input(f"Are you sure you want to delete {service_name}? [y/N] ")
-    if choice.lower() != "y":
+    if choice.lower() == "y":
         remove(path.join(ABSOLUTE_FOLDER_PATH, service_name + ".json"))
-    print(f"Item {service_name} deleted successfully")
+        print(f"Item {service_name} deleted successfully")
 
 
 def list_otp():
@@ -199,8 +199,9 @@ def print_all_otp():
 def delete_password():
     choice = input(
         "Are you sure you want to delete the password from keyring? [y/N] ")
-    if choice.lower() != "y":
+    if choice.lower() == "y":
         keyring.delete_password(SERVICE_ID, "password")
+        print("Password deleted successfully")
 
 
 def main():
