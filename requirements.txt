@@ -1,0 +1,5 @@
+importlib-metadata==6.0.0
+jaraco.classes==3.2.3
+keyring==23.13.1
+more-itertools==9.0.0
+zipp==3.14.0
