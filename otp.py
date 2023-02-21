@@ -4,7 +4,7 @@ import keyring
 from os import listdir, remove, mkdir, path
 import subprocess
 from pathlib import Path
-from sys import exit
+import sys
 import json
 import argparse
 from getpass import getpass
@@ -14,6 +14,15 @@ SERVICE_ID = "OTPGEN"
 FOLDER_NAME = "OTP_DATA"
 EXECUTABLE_DIR = Path(__file__).parent.absolute()
 ABSOLUTE_FOLDER_PATH = path.join(EXECUTABLE_DIR, FOLDER_NAME)
+
+
+def set_pyinstaller_path():
+    if getattr(sys, 'frozen', False):
+        global EXECUTABLE_DIR
+        global ABSOLUTE_FOLDER_PATH
+        executable_path = sys.executable
+        EXECUTABLE_DIR = path.dirname(executable_path)
+        ABSOLUTE_FOLDER_PATH = path.join(EXECUTABLE_DIR, FOLDER_NAME)
 
 
 def init_folder():
@@ -235,6 +244,7 @@ def main():
                         action='store_true')
     args = parser.parse_args()
 
+    set_pyinstaller_path()
     init_folder()
 
     if args.add:
