@@ -36,14 +36,8 @@ def randomize_service_id():
     import string
     service_id = ''.join(random.choice(
         string.ascii_letters + string.digits) for _ in range(16))
-    with open(__file__, "r") as f:
-        lines = f.readlines()
-    with open(__file__, "w") as f:
-        for line in lines:
-            if line.startswith("SERVICE_ID"):
-                f.write(f"SERVICE_ID = \"{service_id}\"\n")
-            else:
-                f.write(line)
+    subprocess.run(
+        ['sed', '-i', "", '-e', 's/SERVICE_ID = "PLACEHOLDER_SERVICE_ID"/SERVICE_ID = "{}"/g'.format(service_id), __file__])
 
 
 def init_folder():
