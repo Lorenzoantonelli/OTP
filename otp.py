@@ -1,14 +1,15 @@
 #! /usr/bin/env python3
 
-from os import listdir, remove, mkdir, path, getenv
+import keyring
+from os import listdir, remove, mkdir, path
 import subprocess
 from pathlib import Path
-from sys import exit, argv
+from sys import exit
 import json
 import argparse
 from getpass import getpass
 
-
+SERVICE_ID = "OTPGEN"
 FOLDER_NAME = "OTP_DATA"
 EXECUTABLE_DIR = Path(__file__).parent.absolute()
 ABSOLUTE_FOLDER_PATH = path.join(EXECUTABLE_DIR, FOLDER_NAME)
@@ -20,7 +21,7 @@ def init_folder():
 
 
 def get_password(double_check=False):
-    password = getenv("OTP_PASSWORD")
+    password = keyring.get_password(SERVICE_ID, "password")
     if not password:
         if double_check:
             while True:
@@ -32,6 +33,7 @@ def get_password(double_check=False):
                     break
         else:
             password = getpass("Insert the password: ")
+        keyring.set_password(SERVICE_ID, "password", password)
     return password
 
 

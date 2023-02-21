@@ -127,3 +127,7 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# OTP_DATA
+OTP_DATA/
+.DS_Store
