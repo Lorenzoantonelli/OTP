@@ -8,6 +8,7 @@ from sys import exit
 import json
 import argparse
 from getpass import getpass
+from datetime import datetime
 
 SERVICE_ID = "OTPGEN"
 FOLDER_NAME = "OTP_DATA"
@@ -121,8 +122,9 @@ def export_all_otp(file_name):
     if path.isdir(ABSOLUTE_FOLDER_PATH):
         files = sorted(listdir(ABSOLUTE_FOLDER_PATH))
         data = dict()
-        file_name = file_name if file_name.endswith(
-            ".json") else file_name + ".json"
+        file_name = file_name[:-5] if file_name.endswith(
+            ".json") else file_name
+        file_name += "_" + datetime.now().strftime("%Y%m%d%H%M%S") + ".json"
         for otp_file in files:
             if otp_file.endswith(".json"):
                 with open(path.join(ABSOLUTE_FOLDER_PATH, otp_file), "r") as f:
@@ -140,8 +142,9 @@ def export_all_encrypted_otp(file_name):
     if path.isdir(ABSOLUTE_FOLDER_PATH):
         files = sorted(listdir(ABSOLUTE_FOLDER_PATH))
         data = dict()
-        file_name = file_name if file_name.endswith(
-            ".json") else file_name + ".json"
+        file_name = file_name[:-5] if file_name.endswith(
+            ".json") else file_name
+        file_name += "_encrypted_" + datetime.now().strftime("%Y%m%d%H%M%S") + ".json"
         for otp_file in files:
             if otp_file.endswith(".json"):
                 with open(path.join(ABSOLUTE_FOLDER_PATH, otp_file), "r") as f:
