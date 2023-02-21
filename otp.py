@@ -37,7 +37,7 @@ def randomize_service_id():
     service_id = ''.join(random.choice(
         string.ascii_letters + string.digits) for _ in range(16))
     subprocess.run(
-        ['sed', '-i', "", '-e', 's/SERVICE_ID = "PLACEHOLDER_SERVICE_ID"/SERVICE_ID = "{}"/g'.format(service_id), __file__])
+        ['sed', '-i', "", '-e', 's/^SERVICE_ID = "PLACEHOLDER_SERVICE_ID"/SERVICE_ID = "{}"/g'.format(service_id), __file__])
 
 
 def init_folder():
