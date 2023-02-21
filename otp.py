@@ -136,6 +136,23 @@ def export_all_otp(file_name):
         print(f"Exported {len(files)} items")
 
 
+def export_all_encrypted_otp(file_name):
+    if path.isdir(ABSOLUTE_FOLDER_PATH):
+        files = sorted(listdir(ABSOLUTE_FOLDER_PATH))
+        data = dict()
+        file_name = file_name if file_name.endswith(
+            ".json") else file_name + ".json"
+        for otp_file in files:
+            if otp_file.endswith(".json"):
+                with open(path.join(ABSOLUTE_FOLDER_PATH, otp_file), "r") as f:
+                    temp_data = json.load(f)
+                    data[temp_data['service_name']] = temp_data
+
+        with open(file_name, "w") as f:
+            json.dump(data, f)
+        print(f"Exported {len(files)} items")
+
+
 def import_all_otp(file_name):
     if not path.isfile(file_name):
         print(f"{file_name} does not exist")
@@ -147,6 +164,21 @@ def import_all_otp(file_name):
     for service_name, otp_data in data.items():
         otp_data['otp_secret'] = encrypt_string(
             otp_data['otp_secret'], get_password())
+        with open(path.join(ABSOLUTE_FOLDER_PATH, service_name + ".json"), "w") as f:
+            json.dump(otp_data, f)
+
+    print(f"Imported {len(data)} items")
+
+
+def import_all_encrypted_otp(file_name):
+    if not path.isfile(file_name):
+        print(f"{file_name} does not exist")
+        exit(1)
+
+    with open(file_name, "r") as f:
+        data = json.load(f)
+
+    for service_name, otp_data in data.items():
         with open(path.join(ABSOLUTE_FOLDER_PATH, service_name + ".json"), "w") as f:
             json.dump(otp_data, f)
 
@@ -186,6 +218,8 @@ def main():
         '--duration', help='Duration of the OTP', type=int, default=30)
     parser.add_argument(
         '--digits', help='Number of digits of the OTP', type=int, default=6)
+    parser.add_argument('-x', '--encrypted', help='Import/Export encrypted OTP instead of plain text',
+                        action='store_true')
     args = parser.parse_args()
 
     init_folder()
@@ -199,9 +233,15 @@ def main():
     elif args.list:
         list_otp()
     elif args.export:
-        export_all_otp(args.export)
+        if args.encrypted:
+            export_all_encrypted_otp(args.export)
+        else:
+            export_all_otp(args.export)
     elif args.import_otp:
-        import_all_otp(args.import_otp)
+        if args.encrypted:
+            import_all_encrypted_otp(args.import_otp)
+        else:
+            import_all_otp(args.import_otp)
     elif args.print:
         print_all_otp()
     else:
