@@ -41,9 +41,9 @@ pip3 install -r requirements.txt
 
 ## Usage
 ```
-usage: otp.py [-h] [-a service_name] [-g service_name] [-d service_name] [-l] [-e export_file_path]
-              [-i input_file_path] [-p] [-c] [--duration DURATION] [--digits DIGITS] [-x]
-              [--delete-password]
+usage: otp.py [-h] [-a service_name] [-s] [-g service_name] [-d service_name]
+              [-l] [-e export_file_path] [-i input_file_path] [-p] [-c]
+              [--duration DURATION] [--digits DIGITS] [-x] [--delete-password]
 
 OTP Manager
 
@@ -51,6 +51,7 @@ options:
   -h, --help            show this help message and exit
   -a service_name, --add service_name
                         Add a new OTP
+  -s, --store           Store password
   -g service_name, --generate service_name
                         Generate OTP
   -d service_name, --delete service_name
