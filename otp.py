@@ -196,6 +196,13 @@ def print_all_otp():
                     f"{data['service_name']}: {generate_otp(data['service_name'])}")
 
 
+def delete_password():
+    choice = input(
+        "Are you sure you want to delete the password from keyring? [y/N] ")
+    if choice.lower() != "y":
+        keyring.delete_password(SERVICE_ID, "password")
+
+
 def main():
     parser = argparse.ArgumentParser(description='OTP Manager')
     parser.add_argument('-a', '--add', metavar="service_name",
@@ -219,6 +226,8 @@ def main():
     parser.add_argument(
         '--digits', help='Number of digits of the OTP', type=int, default=6)
     parser.add_argument('-x', '--encrypted', help='Import/Export encrypted OTP instead of plain text',
+                        action='store_true')
+    parser.add_argument('--delete-password', help='Delete password from keyring',
                         action='store_true')
     args = parser.parse_args()
 
@@ -244,6 +253,8 @@ def main():
             import_all_otp(args.import_otp)
     elif args.print:
         print_all_otp()
+    elif args.delete_password:
+        delete_password()
     else:
         parser.print_help()
 
