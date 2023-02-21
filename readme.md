@@ -4,7 +4,7 @@ This script generates a one-time password for a given secret key. It is based on
 
 It's basically a wrapper around the [oathtool](https://www.nongnu.org/oath-toolkit/) command line tool, providing a simple interface to store and retrieve the secret key for multiple accounts.
 
-The idea is based on (bash-otp)[https://github.com/poolpog/bash-otp], but with a different approach.
+The idea is based on [bash-otp](https://github.com/poolpog/bash-otp), but with a different approach.
 
 ## Requirements
 
