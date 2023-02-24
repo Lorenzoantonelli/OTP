@@ -65,13 +65,13 @@ def get_password(double_check=False, store_password=False):
 
 def encrypt_string(string, password):
     result = subprocess.check_output(['openssl', 'enc', '-aes-256-cbc', '-a',
-                                     '-salt', '-pass', 'pass:' + password], input=string.encode('utf-8'))
+                                     '-salt', '-pbkdf2', '-pass', 'pass:' + password], input=string.encode('utf-8'))
     return result.decode('utf-8')
 
 
 def decrypt_string(string, password):
     try:
-        result = subprocess.check_output(['openssl', 'enc', '-aes-256-cbc', '-a', '-d', '-salt',
+        result = subprocess.check_output(['openssl', 'enc', '-aes-256-cbc', '-a', '-d', '-salt', '-pbkdf2',
                                          '-pass', 'pass:' + password], input=string.encode('utf-8'), stderr=subprocess.DEVNULL)
     except subprocess.CalledProcessError:
         print("Wrong password, please try again")
