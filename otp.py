@@ -279,7 +279,7 @@ def main():
         if args.encrypted:
             export_all_encrypted_otp(args.export)
         else:
-            export_all_otp(args.export, args.save)
+            export_all_otp(args.export, args.store)
     elif args.import_otp:
         if args.encrypted:
             import_all_encrypted_otp(args.import_otp)
