@@ -118,9 +118,14 @@ def generate_otp(service_name, copy_to_clipboard=False, store_password=False):
     result = subprocess.check_output(
         ['oathtool', '--totp', '-b', '-d', str(otp_digit), '-s', str(otp_period), otp_secret])[:-1]
     if copy_to_clipboard:
-        subprocess.run(['pbcopy'], input=result, check=True)
+        otp2clipboard(result)
     return result.decode('utf-8')
 
+def otp2clipboard(text):
+    if sys.platform.startswith('linux'):
+        subprocess.run(['wl-copy'], input=text, check=True)
+    elif sys.platform.startswith('darwin'):
+        subprocess.run(['pbcopy'], input=text, check=True)
 
 def delete_otp(service_name):
     if not path.isfile(path.join(ABSOLUTE_FOLDER_PATH, service_name + ".json")):
