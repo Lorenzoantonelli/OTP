@@ -137,14 +137,14 @@ def text_to_clipboard(text):
             try:
                 subprocess.run(['wl-copy'], input=text, check=True)
             except FileNotFoundError:
-                print("wl-copy not found, is it installed?")
+                print("wl-copy not found, is it installed?", file=sys.stderr)
                 exit(0)
         elif 'DISPLAY' in environ:
             try:
                 p = subprocess.Popen(['xsel','-bi'], stdin=subprocess.PIPE)
                 p.communicate(input=text)
             except FileNotFoundError:
-                print("xsel not found, is it installed?")
+                print("xsel not found, is it installed?", file=sys.stderr)
                 exit(0)
     elif sys.platform.startswith('darwin'):
         subprocess.run(['pbcopy'], input=text, check=True)
