@@ -89,6 +89,13 @@ def save_new_otp(service_name, otp_digit=6, otp_period=30, store_password=False)
         print(f"{service_name} already exists")
         exit(1)
 
+    try:
+        import binascii
+        pyotp.TOTP(otp_secret).now()
+    except binascii.Error:
+        print("ERROR: Secret is not base32 encoded")
+        exit(1)
+
     data = dict()
     data['service_name'] = service_name
     data['otp_secret'] = encrypt_string(otp_secret, password)
