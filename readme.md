@@ -10,7 +10,7 @@ The idea is based on [bash-otp](https://github.com/poolpog/bash-otp), but with a
 - [segno](https://pypi.org/project/segno/)
 - [keyring](https://pypi.org/project/keyring/)
 
-You can use the requirements.txt file to install the dependencies:
+You can use the **requirements.txt** file to install this dependencies:
 
 ```bash
 pip3 install -r requirements.txt
