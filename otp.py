@@ -9,6 +9,7 @@ import json
 import argparse
 from getpass import getpass
 from datetime import datetime
+import pyotp
 
 SERVICE_ID = "PLACEHOLDER_SERVICE_ID"
 FOLDER_NAME = "OTP_DATA"
@@ -115,17 +116,19 @@ def generate_otp(service_name, copy_to_clipboard=False, store_password=False):
     otp_digit = data['otp_digit']
     otp_period = data['otp_period']
 
-    result = subprocess.check_output(
-        ['oathtool', '--totp', '-b', '-d', str(otp_digit), '-s', str(otp_period), otp_secret])[:-1]
+    totp = pyotp.TOTP(otp_secret, digits=otp_digit, interval=otp_period)
+    result = totp.now()
     if copy_to_clipboard:
-        otp2clipboard(result)
-    return result.decode('utf-8')
+        otp2clipboard(result.encode('utf-8'))
+    return result
+
 
 def otp2clipboard(text):
     if sys.platform.startswith('linux'):
         subprocess.run(['wl-copy'], input=text, check=True)
     elif sys.platform.startswith('darwin'):
         subprocess.run(['pbcopy'], input=text, check=True)
+
 
 def delete_otp(service_name):
     if not path.isfile(path.join(ABSOLUTE_FOLDER_PATH, service_name + ".json")):
