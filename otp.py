@@ -1,7 +1,7 @@
 #! /usr/bin/env python3
 
 import keyring
-from os import listdir, remove, mkdir, path
+from os import listdir, remove, mkdir, path, environ
 import subprocess
 from pathlib import Path
 import sys
@@ -127,13 +127,25 @@ def generate_otp(service_name, copy_to_clipboard=False, store_password=False):
     totp = pyotp.TOTP(otp_secret, digits=otp_digit, interval=otp_period)
     result = totp.now()
     if copy_to_clipboard:
-        otp2clipboard(result.encode('utf-8'))
+        text_to_clipboard(result.encode('utf-8'))
     return result
 
 
-def otp2clipboard(text):
+def text_to_clipboard(text):
     if sys.platform.startswith('linux'):
-        subprocess.run(['wl-copy'], input=text, check=True)
+        if 'WAYLAND_DISPLAY' in environ:
+            try:
+                subprocess.run(['wl-copy'], input=text, check=True)
+            except FileNotFoundError:
+                print("wl-copy not found, is it installed?")
+                exit(0)
+        elif 'DISPLAY' in environ:
+            try:
+                p = subprocess.Popen(['xsel','-bi'], stdin=subprocess.PIPE)
+                p.communicate(input=text)
+            except FileNotFoundError:
+                print("xsel not found, is it installed?")
+                exit(0)
     elif sys.platform.startswith('darwin'):
         subprocess.run(['pbcopy'], input=text, check=True)
 
