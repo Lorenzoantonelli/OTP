@@ -54,7 +54,8 @@ def get_password(double_check=False, store_password=False):
                 password = getpass("Insert the password: ")
                 password_confirm = getpass("Confirm the password: ")
                 if password != password_confirm:
-                    print("Passwords do not match, please try again")
+                    print("Passwords do not match, please try again",
+                          file=sys.stderr)
                 else:
                     break
         else:
@@ -75,7 +76,7 @@ def decrypt_string(string, password):
         result = subprocess.check_output(['openssl', 'enc', '-aes-256-cbc', '-a', '-d', '-salt', '-pbkdf2',
                                          '-pass', 'pass:' + password], input=string.encode('utf-8'), stderr=subprocess.DEVNULL)
     except subprocess.CalledProcessError:
-        print("Wrong password, please try again")
+        print("ERROR: Wrong password, please try again", file=sys.stderr)
         exit(1)
     return result.decode('utf-8')
 
@@ -93,7 +94,7 @@ def save_new_otp(service_name, otp_digit=6, otp_period=30, store_password=False)
         import binascii
         pyotp.TOTP(otp_secret).now()
     except binascii.Error:
-        print("ERROR: Secret is not base32 encoded")
+        print("ERROR: Secret is not base32 encoded", file=sys.stderr)
         exit(1)
 
     data = dict()
@@ -112,7 +113,7 @@ def generate_otp(service_name, copy_to_clipboard=False, store_password=False):
     password = get_password(store_password=store_password)
 
     if not path.isfile(path.join(ABSOLUTE_FOLDER_PATH, service_name + ".json")):
-        print(f"{service_name} does not exist")
+        print(f"ERROR: {service_name} does not exist", file=sys.stderr)
         exit(1)
 
     with open(path.join(ABSOLUTE_FOLDER_PATH, service_name + ".json"), "r") as f:
@@ -139,7 +140,7 @@ def otp2clipboard(text):
 
 def delete_otp(service_name):
     if not path.isfile(path.join(ABSOLUTE_FOLDER_PATH, service_name + ".json")):
-        print(f"{service_name} does not exist")
+        print(f"ERROR: {service_name} does not exist", file=sys.stderr)
         exit(1)
 
     choice = input(f"Are you sure you want to delete {service_name}? [y/N] ")
@@ -155,7 +156,7 @@ def list_otp():
             if f.endswith(".json"):
                 print(f[:-5])
         if not files:
-            print("No OTP found")
+            print("No OTP found", file=sys.stderr)
 
 
 def export_all_otp(file_name, store_password=False):
@@ -199,7 +200,7 @@ def export_all_encrypted_otp(file_name):
 
 def import_all_otp(file_name):
     if not path.isfile(file_name):
-        print(f"{file_name} does not exist")
+        print(f"ERROR: {file_name} does not exist", file=sys.stderr)
         exit(1)
 
     with open(file_name, "r") as f:
@@ -216,7 +217,7 @@ def import_all_otp(file_name):
 
 def import_all_encrypted_otp(file_name):
     if not path.isfile(file_name):
-        print(f"{file_name} does not exist")
+        print(f"ERROR: {file_name} does not exist", file=sys.stderr)
         exit(1)
 
     with open(file_name, "r") as f:
@@ -250,7 +251,7 @@ def delete_password():
 
 def generate_qr_code(service_name):
     if not path.isfile(path.join(ABSOLUTE_FOLDER_PATH, service_name + ".json")):
-        print(f"{service_name} does not exist")
+        print(f"ERROR: {service_name} does not exist", file=sys.stderr)
         exit(1)
 
     with open(path.join(ABSOLUTE_FOLDER_PATH, service_name + ".json"), "r") as f:
