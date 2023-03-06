@@ -1,24 +1,16 @@
 # OTP Generator
 
-This script generates a one-time password for a given secret key. It is based on the [RFC 6238](https://tools.ietf.org/html/rfc6238) standard.
-
-It's basically a wrapper around the [oathtool](https://www.nongnu.org/oath-toolkit/) command line tool, providing a simple interface to store and retrieve the secret key for multiple accounts.
+This script is an OTP manager, it can store secret keys and generate OTP code based on the [RFC 6238](https://tools.ietf.org/html/rfc6238) standard.
 
 The idea is based on [bash-otp](https://github.com/poolpog/bash-otp), but with a different approach.
 
 ## Requirements
 
-- [oathtool](https://www.nongnu.org/oath-toolkit/)
+- [pyotp](https://pypi.org/project/pyotp/)
+- [segno](https://pypi.org/project/segno/)
 - [keyring](https://pypi.org/project/keyring/)
 
-On MacOS, you can install these dependencies using [Homebrew](https://brew.sh/) and **pip3**:
-
-```bash
-brew install oath-toolkit
-pip3 install keyring
-```
-
-You can also use the requirements.txt file to install the dependencies:
+You can use the requirements.txt file to install the dependencies:
 
 ```bash
 pip3 install -r requirements.txt
@@ -44,6 +36,7 @@ pip3 install -r requirements.txt
 usage: otp.py [-h] [-a service_name] [-s] [-g service_name] [-d service_name]
               [-l] [-e export_file_path] [-i input_file_path] [-p] [-c]
               [--duration DURATION] [--digits DIGITS] [-x] [--delete-password]
+              [--qr-code service_name]
 
 OTP Manager
 
@@ -67,6 +60,6 @@ options:
   --digits DIGITS       Number of digits of the OTP
   -x, --encrypted       Import/Export encrypted OTP instead of plain text
   --delete-password     Delete password from keyring
+  --qr-code service_name
+                        Generate QR code for OTP
 ```
-
-
