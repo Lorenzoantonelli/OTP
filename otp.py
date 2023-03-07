@@ -83,7 +83,7 @@ def get_password():
                 break
             else:
                 attempts += 1
-                
+
                 if attempts == 3:
                     print("Too many attempts, exiting", file=sys.stderr)
                     exit(1)
@@ -160,8 +160,8 @@ def save_new_otp(service_name, otp_digit=6, otp_period=30):
     print(f"Item {service_name} saved successfully")
 
 
-def generate_otp(service_name, copy_to_clipboard=False):
-    password = get_password()
+def generate_otp(service_name, copy_to_clipboard=False, password_preloaded=None):
+    password = get_password() if password_preloaded is None else password_preloaded
 
     if not check_service_exists(service_name):
         print(f"ERROR: {service_name} does not exist", file=sys.stderr)
@@ -271,12 +271,14 @@ def import_all_otp(file_name):
         print(f"ERROR: {file_name} does not exist", file=sys.stderr)
         exit(1)
 
+    password = get_password()
+
     with open(file_name, "r") as f:
         data = json.load(f)
 
     for service_name, otp_data in data.items():
         otp_data['otp_secret'] = encrypt_string(
-            otp_data['otp_secret'], get_password())
+            otp_data['otp_secret'], password)
         with open(get_service_path(service_name), "w") as f:
             json.dump(otp_data, f)
 
@@ -300,13 +302,16 @@ def import_all_encrypted_otp(file_name):
 
 def print_all_otp():
     if path.isdir(DATA_FOLDER):
+
+        password = get_password()
+
         files = sorted(listdir(DATA_FOLDER))
         for f in files:
             if f.endswith(".json"):
                 with open(path.join(DATA_FOLDER, f), "r") as f:
                     data = json.load(f)
                 print(
-                    f"{data['service_name']}: {generate_otp(data['service_name'])}")
+                    f"{data['service_name']}: {generate_otp(data['service_name'], password_preloaded=password)}")
 
 
 def delete_password():
