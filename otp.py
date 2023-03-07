@@ -87,10 +87,11 @@ def get_service_path(service_name):
 def save_new_otp(service_name, otp_digit=6, otp_period=30):
     password = get_password()
 
-    otp_secret = input("OTP secret: ")
     if check_service_exists(service_name):
         print(f"{service_name} already exists")
         exit(1)
+
+    otp_secret = input("OTP secret: ")
 
     # this will check is string is base32 encoded and correctly padded
     try:
