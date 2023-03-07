@@ -13,6 +13,7 @@ import pyotp
 from binascii import Error as binascii_error
 import random
 import string
+import hashlib
 
 SERVICE_ID = None
 DATA_FOLDER = "~/.otp_data/OTP"
@@ -48,14 +49,61 @@ def init_folders():
         makedirs(DATA_FOLDER)
 
 
+# this will ensure that the password is the same for all the services, even when is not stored in the keychain
+def init_password():
+    password_hash_path = path.join(MAIN_FOLDER, "password_hash.json")
+
+    if not path.isfile(password_hash_path):
+        while True:
+            password = getpass("Insert the password: ")
+            password_confirm = getpass("Confirm the password: ")
+            if password == password_confirm:
+                break
+
+        store_password = input(
+            "Do you want to store the password in the keychain? [y/N] ")
+        if store_password.lower() == "y":
+            store_password_to_keychain(password)
+
+        salt = "otp_salt_for_passwords"
+        hashed_password = hashlib.sha256(
+            (password + salt).encode()).hexdigest()
+
+        with open(password_hash_path, "w") as f:
+            json.dump(hashed_password, f)
+
+
 def get_password():
     password = keyring.get_password(SERVICE_ID, "password")
     if not password:
-        password = getpass("Insert the password: ")
+        attempts = 0
+        while True:
+            password = getpass("Insert the password: ")
+            if validate_password(password):
+                break
+            else:
+                attempts += 1
+                
+                if attempts == 3:
+                    print("Too many attempts, exiting", file=sys.stderr)
+                    exit(1)
+
+                print("Wrong password, please try again", file=sys.stderr)
+
     return password
 
 
-# TODO provide an option for the user to store the password in the keychain
+def validate_password(password):
+    password_hash_path = path.join(MAIN_FOLDER, "password_hash.json")
+
+    with open(password_hash_path, "r") as f:
+        password_hash = json.load(f)
+
+    salt = "otp_salt_for_passwords"
+
+    return password_hash == hashlib.sha256((password + salt).encode()).hexdigest()
+
+
 def store_password_to_keychain(password):
     keyring.set_password(SERVICE_ID, "password", password)
 
@@ -324,6 +372,7 @@ def main():
 
     init_folders()
     init_service_id()
+    init_password()
 
     if args.add:
         save_new_otp(args.add, args.digits, args.duration)
