@@ -85,7 +85,7 @@ def get_service_path(service_name):
 
 
 def save_new_otp(service_name, otp_digit=6, otp_period=30):
-    password = get_password(double_check=True)
+    password = get_password()
 
     otp_secret = input("OTP secret: ")
     if check_service_exists(service_name):
