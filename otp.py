@@ -3,7 +3,6 @@
 import keyring
 from os import listdir, remove, makedirs, path, environ
 import subprocess
-from pathlib import Path
 import sys
 import json
 import argparse
