@@ -46,23 +46,15 @@ def init_folder():
         mkdir(ABSOLUTE_FOLDER_PATH)
 
 
-def get_password(double_check=False, store_password=False):
+def get_password():
     password = keyring.get_password(SERVICE_ID, "password")
     if not password:
-        if double_check:
-            while True:
-                password = getpass("Insert the password: ")
-                password_confirm = getpass("Confirm the password: ")
-                if password != password_confirm:
-                    print("Passwords do not match, please try again",
-                          file=sys.stderr)
-                else:
-                    break
-        else:
-            password = getpass("Insert the password: ")
-        if store_password:
-            keyring.set_password(SERVICE_ID, "password", password)
+        password = getpass("Insert the password: ")
     return password
+
+
+def store_password_to_keychain(password):
+    keyring.set_password(SERVICE_ID, "password", password)
 
 
 def encrypt_string(string, password):
@@ -81,8 +73,8 @@ def decrypt_string(string, password):
     return result.decode('utf-8')
 
 
-def save_new_otp(service_name, otp_digit=6, otp_period=30, store_password=False):
-    password = get_password(double_check=True, store_password=store_password)
+def save_new_otp(service_name, otp_digit=6, otp_period=30):
+    password = get_password(double_check=True)
 
     otp_secret = input("OTP secret: ")
 
@@ -109,8 +101,8 @@ def save_new_otp(service_name, otp_digit=6, otp_period=30, store_password=False)
     print(f"Item {service_name} saved successfully")
 
 
-def generate_otp(service_name, copy_to_clipboard=False, store_password=False):
-    password = get_password(store_password=store_password)
+def generate_otp(service_name, copy_to_clipboard=False):
+    password = get_password()
 
     if not path.isfile(path.join(ABSOLUTE_FOLDER_PATH, service_name + ".json")):
         print(f"ERROR: {service_name} does not exist", file=sys.stderr)
@@ -171,8 +163,8 @@ def list_otp():
             print("No OTP found", file=sys.stderr)
 
 
-def export_all_otp(file_name, store_password=False):
-    password = get_password(store_password=store_password)
+def export_all_otp(file_name):
+    password = get_password()
     if path.isdir(ABSOLUTE_FOLDER_PATH):
         files = sorted(listdir(ABSOLUTE_FOLDER_PATH))
         data = dict()
@@ -284,8 +276,6 @@ def main():
     parser = argparse.ArgumentParser(description='OTP Manager')
     parser.add_argument('-a', '--add', metavar="service_name",
                         help='Add a new OTP', type=str)
-    parser.add_argument('-s', '--store', help='Store password',
-                        action='store_true')
     parser.add_argument('-g', '--generate',
                         metavar="service_name", help='Generate OTP', type=str)
     parser.add_argument('-d', '--delete', help='Delete OTP',
@@ -317,9 +307,9 @@ def main():
     init_folder()
 
     if args.add:
-        save_new_otp(args.add, args.digits, args.duration, args.store)
+        save_new_otp(args.add, args.digits, args.duration, )
     elif args.generate:
-        print(generate_otp(args.generate, args.copy, args.store))
+        print(generate_otp(args.generate, args.copy))
     elif args.delete:
         delete_otp(args.delete)
     elif args.list:
@@ -328,7 +318,7 @@ def main():
         if args.encrypted:
             export_all_encrypted_otp(args.export)
         else:
-            export_all_otp(args.export, args.store)
+            export_all_otp(args.export)
     elif args.import_otp:
         if args.encrypted:
             import_all_encrypted_otp(args.import_otp)
